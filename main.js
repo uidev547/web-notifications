@@ -97,7 +97,6 @@ function onPageLoad() {
          function(reg) {
            registration = reg;
            window.registration = reg;
-           initialiseState(reg);
          }
        );
    }
