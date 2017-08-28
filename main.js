@@ -62,9 +62,9 @@ function subscribe() {
            userVisibleOnly: true
          }).then(
            function(new_subscription) {
-                var rawKey = sub.getKey ? sub.getKey('p256dh') : '';
+                var rawKey = new_subscription.getKey ? new_subscription.getKey('p256dh') : '';
                 var key = rawKey ? Base64EncodeUrl(btoa(String.fromCharCode.apply(null, new Uint8Array(rawKey)))) : '';
-                var rawAuthSecret = sub.getKey ? sub.getKey('auth') : '';
+                var rawAuthSecret = new_subscription.getKey ? new_subscription.getKey('auth') : '';
                 var authSecret = rawAuthSecret ? Base64EncodeUrl(btoa(String.fromCharCode.apply(null, new Uint8Array(rawAuthSecret)))) : '';
                 postSubscribeObj('subscribe', new_subscription);
            }
