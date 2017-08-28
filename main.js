@@ -4,6 +4,14 @@ var callhome = function(status) {
 }
 var storage = window.localStorage;
 var registration;
+function Base64EncodeUrl(str){
+    return str.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
+}
+
+function Base64DecodeUrl(str){
+    str = (str + '===').slice(0, str.length + (str.length % 4));
+    return str.replace(/-/g, '+').replace(/_/g, '/');
+}
 
 function postSubscribeObj(statusType, subscription) {
     // Send the information to the server with fetch API.
@@ -54,7 +62,11 @@ function subscribe() {
            userVisibleOnly: true
          }).then(
            function(new_subscription) {
-             postSubscribeObj('subscribe', new_subscription);
+                var rawKey = sub.getKey ? sub.getKey('p256dh') : '';
+                var key = rawKey ? Base64EncodeUrl(btoa(String.fromCharCode.apply(null, new Uint8Array(rawKey)))) : '';
+                var rawAuthSecret = sub.getKey ? sub.getKey('auth') : '';
+                var authSecret = rawAuthSecret ? Base64EncodeUrl(btoa(String.fromCharCode.apply(null, new Uint8Array(rawAuthSecret)))) : '';
+                postSubscribeObj('subscribe', new_subscription);
            }
          );
        }
