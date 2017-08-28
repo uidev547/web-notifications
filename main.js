@@ -4,14 +4,6 @@ var callhome = function(status) {
 }
 var storage = window.localStorage;
 var registration;
-function Base64EncodeUrl(str){
-    return str.replace(/\+/g, '-').replace(/\//g, '_').replace(/\=+$/, '');
-}
-
-function Base64DecodeUrl(str){
-    str = (str + '===').slice(0, str.length + (str.length % 4));
-    return str.replace(/-/g, '+').replace(/_/g, '/');
-}
 
 function postSubscribeObj(statusType, subscription) {
     // Send the information to the server with fetch API.
@@ -43,6 +35,9 @@ function unsubscribe() {
 }
 
 function subscribe() {
+  if(!isAllowed(registration)) {
+    return false;
+  }
    registration.pushManager.getSubscription().then(
        function(existing_subscription) {
            window.existing_subscription = existing_subscription;
@@ -62,10 +57,6 @@ function subscribe() {
            userVisibleOnly: true
          }).then(
            function(new_subscription) {
-                var rawKey = new_subscription.getKey ? new_subscription.getKey('p256dh') : '';
-                var key = rawKey ? Base64EncodeUrl(btoa(String.fromCharCode.apply(null, new Uint8Array(rawKey)))) : '';
-                var rawAuthSecret = new_subscription.getKey ? new_subscription.getKey('auth') : '';
-                var authSecret = rawAuthSecret ? Base64EncodeUrl(btoa(String.fromCharCode.apply(null, new Uint8Array(rawAuthSecret)))) : '';
                 postSubscribeObj('subscribe', new_subscription);
            }
          );
@@ -74,7 +65,7 @@ function subscribe() {
  }
 
 // Once the service worker is registered set the initial state
- function initialiseState(reg) {
+ function isAllowed(reg) {
    // Are Notifications supported in the service worker?
    if (!(reg.showNotification)) {
      callhome("showing-notifications-not-supported-in-browser");
@@ -95,7 +86,7 @@ function subscribe() {
      console.log('push-notifications-not-supported-in-browser');
      return;
    }
-   subscribe();
+   return true;
  }
 
 function onPageLoad() {
@@ -116,4 +107,4 @@ function onPageLoad() {
    }
 }
 
-// onPageLoad();
+onPageLoad();
