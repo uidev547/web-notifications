@@ -33,6 +33,7 @@ function postSubscribeObj(statusType, subscription) {
     } else {
       document.querySelector('#sub-obj').textContent = '';
       document.querySelector('#token').textContent = '';
+	document.querySelector('#sample-curl').textContent = '';
     }
     // API call to store the endpoint in the database
 
