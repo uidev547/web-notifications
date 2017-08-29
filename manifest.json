@@ -1,4 +1,5 @@
 {
     "name": "webnotificationtest",
-    "gcm_sender_id": "892474162379"
+    "gcm_sender_id": "892474162379",
+    "version": "0.1"
 }

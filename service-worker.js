@@ -1,16 +1,33 @@
-// Register event listener for the 'push' event.
+let counter = 0;
 self.addEventListener('push', function(event) {
-    payload = event.data.text();
-    // Keep the service worker alive until the notification is created.
-    event.waitUntil(
-        // Show a notification with title and use the payload
-        // as the body.
-        self.registration.showNotification(payload.title, payload.options)
-    );
+  let notificationTitle = 'Hello';
+  const notificationOptions = {
+    body: 'Default Notification ' + counter++,
+    icon: './favicon.png',
+    badge: './',
+    tag: 'Hi',
+    data: {
+      url: location.origin,
+    },
+  };
+
+  if (event.data) {
+    const dataText = event.data.text();
+    notificationTitle = 'Received Payload';
+    notificationOptions.body = `Push data: '${dataText}'`;
+  }
+  self.registration.showNotification(notificationTitle, notificationOptions);
 });
 
-// Event Listener for notification click
 self.addEventListener('notificationclick', function(event) {
-    event.notification.close();
-    clients.openWindow('http://localhost:3000')
+  event.notification.close();
+  let clickResponsePromise = Promise.resolve();
+  if (event.notification.data && event.notification.data.url) {
+    clickResponsePromise = clients.openWindow(event.notification.data.url);
+  }
+  console.log('notificationclick', event);
+});
+
+self.addEventListener('notificationclose', function(event) {
+  console.log('notificationclose', event);
 });

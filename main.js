@@ -10,9 +10,30 @@ function postSubscribeObj(statusType, subscription) {
     // the type of the request, the name of the user subscribing,
     // and the push subscription endpoint + key the server needs
     // to send push messages
-
-    var subscription = subscription.toJSON();
-    console.log('statusType', statusType, subscription);
+    var subscriptionJson = subscription.toJSON();
+    console.log('statusType', statusType, subscriptionJson);
+    if(statusType === 'subscribe') {
+      var index = subscriptionJson.endpoint.lastIndexOf('/');
+      var token = subscriptionJson.endpoint.substring(index+1);
+      var sampleCurl = `curl -X POST \
+  https://fcm.googleapis.com/fcm/send \
+  -H 'authorization: key=AAAAz8ua_Ms:APA91bGqCEHBK6CjpuLPbULwAmstnZXZuFCVzcRnUKMmD4qQ4pg3iWV_Df9RS-Ea_vj_awH9UkP3eS07H-ec16k0eZLiGOWk2cOnbE2oIHJwYOOb_hzq63T9z8CDfxXvPAu4Y_ePJEGN' \
+  -H 'cache-control: no-cache' \
+  -H 'content-type: application/json' \
+  -d '{
+	"to":"${token}",
+	"data": {
+		"title": "Hi title",
+		"body": "Hii How are you"
+	}
+}'`;
+      document.querySelector('#token').textContent = token;
+      document.querySelector('#sub-obj').textContent = JSON.stringify(subscriptionJson, null, '    ');
+      document.querySelector('#sample-curl').textContent = sampleCurl;
+    } else {
+      document.querySelector('#sub-obj').textContent = '';
+      document.querySelector('#token').textContent = '';
+    }
     // API call to store the endpoint in the database
 
 }
@@ -23,6 +44,7 @@ function unsubscribe() {
         .then(function(subscription) {
                 // Check we have a subscription to unsubscribe
                 if (!subscription) {
+                   postSubscribeObj('unsubscribe', subscription);
                     return;
                 }
                 subscription.unsubscribe()
@@ -64,6 +86,24 @@ function subscribe() {
      )
  }
 
+ function getExistingToken() {
+   if(!isAllowed(registration)) {
+    return false;
+  }
+   registration.pushManager.getSubscription().then(
+       function(existing_subscription) {
+           window.existing_subscription = existing_subscription;
+         // Check if Subscription is available
+         console.log('existing_subscription', existing_subscription);
+         if (existing_subscription) {
+           postSubscribeObj('subscribe', existing_subscription);
+           endpoint = existing_subscription.toJSON()['endpoint']
+           return existing_subscription;
+         }
+       }
+     )
+ }
+
 // Once the service worker is registered set the initial state
  function isAllowed(reg) {
    // Are Notifications supported in the service worker?
@@ -96,7 +136,8 @@ function onPageLoad() {
        .then(
          function(reg) {
            registration = reg;
-           window.registration = reg;
+           registration.update();
+           getExistingToken();
          }
        );
    }
