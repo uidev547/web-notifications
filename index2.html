@@ -1,0 +1,26 @@
+<!DOCTYPE>
+<html>
+    <head>
+        <link rel="manifest" href="./manifest.json" />
+        <script src="./main2.js" type="text/javascript"></script>
+        <style>
+            pre {
+                white-space: pre-wrap;
+            }
+        </style>
+    </head>
+    <body>
+        <button onclick="subscribe()">Subscribe and get token</button>
+        <button onclick="unsubscribe()">UnSubscribe</button>
+        <br />
+        <h3>Token</h3>
+        <span id="token"></span>
+        <br/>
+        <h4>Subscription object</h4>
+        <pre id="sub-obj"></pre>
+        
+        <br />
+        <h4>Sample Curl</h4>
+        <pre id="sample-curl"></pre>
+    </body>
+</html>
