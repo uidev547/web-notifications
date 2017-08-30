@@ -16,7 +16,7 @@ self.addEventListener('push', function(event) {
     notificationTitle = 'Received Payload';
     notificationOptions.body = `Push data: '${dataText}'`;
   }
-  self.registration.showNotification(notificationTitle, notificationOptions);
+  self.registration.showNotification(notificationTitle+ 'version1', notificationOptions);
 });
 
 self.addEventListener('notificationclick', function(event) {
