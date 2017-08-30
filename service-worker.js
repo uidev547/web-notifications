@@ -2,7 +2,7 @@ let counter = 0;
 self.addEventListener('push', function(event) {
   let notificationTitle = 'Hello';
   const notificationOptions = {
-    body: 'Default Notification ' + counter++,
+    body: 'version1 ' + counter++,
     icon: './favicon.png',
     badge: './',
     tag: 'Hi',
